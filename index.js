@@ -8,15 +8,16 @@ module.exports = function(options, done){
 
     self.add({'test' : 'fuzz'}, function(done){
 
-        var allActions = this.list() // use this to test both conditions
+        var allActions = self.list() // use this to test both conditions
 
 
         var loopIntervalActive = false
         var totalRun = 0
 
-        self.log.info('Starting Fuzz test, running for:', options.testTime)
+        console.log('running plugin')
 
         loopInterval = setInterval(function(){
+            console.log('loop interval, ', loopIntervalActive)
             if(loopIntervalActive){
                 self.log.info('Completed Fuzz test, returning results')
                 var results = {}
@@ -30,6 +31,8 @@ module.exports = function(options, done){
                 done(null, results)
                 // complete and return data here.
             } else {
+                loopIntervalActive = true
+                self.log.info('Starting Fuzz test, running for: ', options.testTime / 1000, ' seconds.')
                 // fuzz test here.
                 for(var i = 0 ; i < allActions.length ; i++){
                     //generate random stuff to head in to each action as arguments
