@@ -6,20 +6,23 @@ module.exports = function(options, done){
 
     var self = this //don't trounce the seneca var, just in case
 
-    self.add({'test' : 'fuzz'}, function(done){
+    self.add({role: 'fuzztester', 'cmd' : 'fuzz'}, function(args, done){
 
-        var allActions = self.list() // use this to test both conditions
+        var allActions = []
+        self.list().map(function(element){
+            allActions.push({testAction : element, errorCount : 0, successCount : 0})
+        }) // use this to test both conditions
 
 
         var loopIntervalActive = false
         var totalRun = 0
 
-        console.log('running plugin')
+        self.log.info('Beginning Fuzz test for all listed actions')
 
         loopInterval = setInterval(function(){
             console.log('loop interval, ', loopIntervalActive)
             if(loopIntervalActive){
-                self.log.info('Completed Fuzz test, returning results')
+                console.log('Completed Fuzz test, returning results')
                 var results = {}
                 // calc results here
 
@@ -32,20 +35,33 @@ module.exports = function(options, done){
                 // complete and return data here.
             } else {
                 loopIntervalActive = true
-                self.log.info('Starting Fuzz test, running for: ', options.testTime / 1000, ' seconds.')
-                // fuzz test here.
-                for(var i = 0 ; i < allActions.length ; i++){
-                    //generate random stuff to head in to each action as arguments
-                    self.log.debug('running: ', allActions[i].testAction)
-                    self.act(allActions[i].testAction, function(err){
-                        totalRun++
-                        if(err){
+                console.log('Starting Fuzz test, running for: ', options.testTime / 1000, ' seconds.')
+                // fuzz test here, forever, we'll clear the interval on the next run in
+                while(true){
+                    for(var i = 0 ; i < allActions.length ; i++){
+                        //generate
+                        //
+                        //
+                        //
+                        //
+                        // random stuff to head in to each action as arguments
+                        //console.log('running: ', allActions[i].testAction)
+                        try{
+                            self.act(allActions[i].testAction, function(err){
+                                totalRun++
+                                if(err){
+                                    allActions[i].errorCount++
+                                } else {
+                                    allActions[i].successCount++
+                                }
+                            })
+                        } catch(error){
                             allActions[i].errorCount++
-                        } else {
-                            allActions[i].successCount++
                         }
-                    })
+
+                    }
                 }
+
             }
 
         }, options.testTime)
@@ -53,5 +69,5 @@ module.exports = function(options, done){
     })
 
 
-    return 'fuzztester'
+    return {name : 'fuzztester' }
 }
