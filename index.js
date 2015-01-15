@@ -1,3 +1,4 @@
+var domain = require('domain')
 module.exports = function(options, done){
 
     options.argsLength = options.argsLength || 8 // 8 arguments by default
@@ -5,22 +6,23 @@ module.exports = function(options, done){
     options.testTime = parseInt(options.testTime) * 1000 || 10 * 1000 // 60 seconds default
 
     var self = this //don't trounce the seneca var, just in case
+    var totalInterations = 0, totalErrors = 0, totalSuccess = 0
+
 
     function run(iterator, randomArgs, element, cb){
         try{
 
             self.act(element.testAction, randomArgs, function(err){
                 if(err){
-                    element.errorCount++
+                    totalErrors++
                 } else {
-                    element.successCount++
+                    totalSuccess++
                 }
-                element.iterations++
-                console.log(element)
+                totalInterations++
             })
         } catch(error){
-            element.errorCount++
-            element.iterations++
+            totalErrors++
+            totalInterations++
         }
 
     }
@@ -29,6 +31,12 @@ module.exports = function(options, done){
     self.add({role: 'fuzztester', 'cmd' : 'fuzz'}, function(args, done){
 
         var allActions = []
+
+        var runDomain = domain.create()
+
+        runDomain.on('error', function(){
+            totalErrors++
+        })
 
         self.list().map(function(element){
             if(element.cmd !== 'fuzz'){
@@ -56,7 +64,9 @@ module.exports = function(options, done){
                 //console.log('running: ', allActions[i])
                 //allActions[i].iterations++
 
-                run(i,{},allActions[i])
+                runDomain.run(function(){
+                    run(i,{},allActions[i])
+                })
 
             }
 
@@ -68,9 +78,7 @@ module.exports = function(options, done){
         // calc results here
 
         /// debugging
-        allActions.map(function(element){
-            console.log('action: ', element.testAction, ' error: ', element.errorCount, ' success (should be 0) : ', element.successCount, ' iterations: ', element.iterations)
-        })
+        console.log('totals: ', totalInterations, ' e: ', totalErrors, ' s: ', totalSuccess)
         //clearInterval(loopInterval)
         done(null, results)
         // complete and return data here.
