@@ -1,5 +1,7 @@
 var domain = require('domain')
+var util = require('util')
 module.exports = function(options, done){
+
 
     options.argsLength = options.argsLength || 8 // 8 arguments by default
     //options.actionsList = options.actionsList || ['all'] // all options by default
@@ -55,14 +57,8 @@ module.exports = function(options, done){
         while(new Date().valueOf() - startTime.valueOf() < options.testTime){
             for(var i = 0 ; i < allActions.length ; i++){
 
-                //generate
-                //
-                //
-                //
-                //
                 // random stuff to head in to each action as arguments
-                //console.log('running: ', allActions[i])
-                //allActions[i].iterations++
+
 
                 runDomain.run(function(){
                     run(i,{},allActions[i])
@@ -76,6 +72,9 @@ module.exports = function(options, done){
         console.log('Completed Fuzz test, returning results')
         var results = {}
         // calc results here
+        results.errorCount = totalErrors || 0
+        results.iterations = totalInterations || 0
+        results.successCount = totalSuccess || 0
 
         /// debugging
         console.log('totals: ', totalInterations, ' e: ', totalErrors, ' s: ', totalSuccess)
