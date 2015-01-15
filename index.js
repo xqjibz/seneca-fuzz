@@ -6,21 +6,30 @@ module.exports = function(options, done){
 
     var self = this //don't trounce the seneca var, just in case
 
-    function run(element, randomArgs, allActions, cb){
-        self.act(allActions.testAction, randomArgs, function(err){
-            if(err){
-                allActions.errorCount++
-            } else {
-                allActions.successCount++
-            }
+    function run(iterator, randomArgs, element, cb){
+        try{
 
-        })
+            self.act(element.testAction, randomArgs, function(err){
+                if(err){
+                    element.errorCount++
+                } else {
+                    element.successCount++
+                }
+                element.iterations++
+                console.log(element)
+            })
+        } catch(error){
+            element.errorCount++
+            element.iterations++
+        }
+
     }
 
 
     self.add({role: 'fuzztester', 'cmd' : 'fuzz'}, function(args, done){
 
         var allActions = []
+
         self.list().map(function(element){
             if(element.cmd !== 'fuzz'){
                 allActions.push({testAction : element, errorCount : 0, successCount : 0, iterations : 0})
@@ -45,14 +54,9 @@ module.exports = function(options, done){
                 //
                 // random stuff to head in to each action as arguments
                 //console.log('running: ', allActions[i])
-                allActions[i].iterations++
+                //allActions[i].iterations++
 
-                try{
-                    run(i, {}, allActions[i])
-
-                } catch(error){
-                    allActions[i].errorCount++
-                }
+                run(i,{},allActions[i])
 
             }
 
