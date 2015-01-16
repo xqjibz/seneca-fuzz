@@ -26,26 +26,25 @@ module.exports = function(seneca, options, done){
 
         var allActions = []
 
-        var runDomain = domain.create()
+        var runDomain = domain.create() // use the domain here to catch throws from the async calls
 
         runDomain.on('error', function(){
             totalErrors++
         })
 
+        // loop the actions from the list, so we have something to act on, filtering here if necessary
         self.list().map(function(element){
             if(element.cmd !== 'fuzz'){
-                allActions.push({testAction : element, errorCount : 0, successCount : 0, iterations : 0})
+                allActions.push({testAction : element})
             }
 
-        }) // use this to test both conditions
-
+        })
 
         self.log.info('Beginning Fuzz test for all listed actions')
 
-
         var startTime = new Date()
         self.log.info('Starting Fuzz test, running for: ', options.testTime / 1000, ' seconds.')
-        // fuzz test here, forever, we'll clear the interval on the next run in
+        // do this for the time we specify in the options.
         while(new Date().valueOf() - startTime.valueOf() < options.testTime){
             for(var i = 0 ; i < allActions.length ; i++){
 
@@ -76,16 +75,17 @@ module.exports = function(seneca, options, done){
 
         }
 
-        /// debugging
+        // debugging
         self.log.debug('totals: ', returnObject.totalInterations, ' e: ', returnObject.totalErrors, ' s: ', returnObject.totalSuccess)
         //clearInterval(loopInterval)
         self.log.info('Completed Fuzz test, returning results')
+        // send it all back
         done(null, returnObject)
         // complete and return data here.
 
 
     })
 
-
-     done(null,{name : 'fuzztester' })
+    // this is for the seneca plugin framework, for logging.
+    done(null,{name : 'fuzztester' })
 }
