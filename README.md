@@ -11,6 +11,23 @@ Contributions will be accepted via a pull request, with an accompanying issue if
 
 ## Examples/Usage
 
+Using mocha/chai
+```
+var seneca = require('seneca')()
+
+seneca.use('fuzztester')
+
+
+describe('my plugin', function(){
+    it('should match iterations to errors', function(done){
+        seneca.act({role:'fuzztester', cmd:'fuzz'}, function(err, results){
+                       expect(results.totalIterations).to.equal(results.errorCount)
+                       expect(results.successCount.to.equal(0)
+                       expect(err).to.be.null
+                   })
+    })
+})
+```
 
 ## Options
 
