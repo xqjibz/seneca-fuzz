@@ -12,11 +12,10 @@ Contributions will be accepted via a pull request, with an accompanying issue if
 ## Examples/Usage
 
 Using mocha/chai
-```
+
+```js
 var seneca = require('seneca')()
-
 seneca.use('fuzztester')
-
 
 describe('my plugin', function(){
     it('should match iterations to errors', function(done){
