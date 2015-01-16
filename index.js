@@ -11,26 +11,15 @@ module.exports = function(seneca, options, done){
     options.testTime = parseInt(options.testTime) * 1000 || 10 * 1000 // 60 seconds default
 
     var self = this //don't trounce the seneca var, just in case
-    var totalInterations = 0, totalErrors = 0, totalSuccess = 0
-
-
-    function run(randomArgs, element){
-        try{
-
-            self.act(element.testAction, randomArgs, function(err){
-                if(err){
-                    totalErrors++
-                } else {
-                    totalSuccess++
-                }
-                totalInterations++
-            })
-        } catch(error){
-            totalErrors++
-            totalInterations++
+    var returnObject = {
+            totalIterations : 0
+        ,   totalErrors : 0
+        ,   totalSuccess : 0
         }
+    var run = require('./lib/run')(returnObject)
 
-    }
+
+
 
 
     self.add({role: 'fuzztester', 'cmd' : 'fuzz'}, function(args, done){
@@ -79,8 +68,6 @@ module.exports = function(seneca, options, done){
                     }
                 }
 
-
-
                 runDomain.run(function(){
                     run(randomArgs,allActions[i])
                 })
@@ -89,19 +76,11 @@ module.exports = function(seneca, options, done){
 
         }
 
-
-
-        var results = {}
-        // calc results here
-        results.errorCount = totalErrors || 0
-        results.iterations = totalInterations || 0
-        results.successCount = totalSuccess || 0
-
         /// debugging
-        self.log.debug('totals: ', totalInterations, ' e: ', totalErrors, ' s: ', totalSuccess)
+        self.log.debug('totals: ', returnObject.totalInterations, ' e: ', returnObject.totalErrors, ' s: ', returnObject.totalSuccess)
         //clearInterval(loopInterval)
         self.log.info('Completed Fuzz test, returning results')
-        done(null, results)
+        done(null, returnObject)
         // complete and return data here.
 
 
