@@ -1,15 +1,15 @@
-# seneca-fuzztester
+## seneca-fuzztester
 
-## A 'fuzz' testing plugin for the [Seneca Toolkit](http://senecajs.org)
+### A 'fuzz' testing plugin for the [Seneca Toolkit](http://senecajs.org)
 
 This module provides a method to [fuzz test](http://en.wikipedia.org/wiki/Fuzz_testing) various plugins.
 
-## Support/Contributions
+### Support/Contributions
 
 Please use the [issues tracker](https://github.com/xqjibz/seneca-fuzz/issues) of this git repository.
 Contributions will be accepted via a pull request, with an accompanying issue if appropriate.
 
-## Examples/Usage
+### Examples/Usage
 
 Using mocha/chai
 
@@ -28,7 +28,7 @@ describe('my plugin', function(){
 })
 ```
 
-## Options
+### Options
 
 Objects that would have string keys, have a minimum length of 1
 This uses the [random-ext](https://www.npmjs.com/package/random-ext). More detailed documentation may be found there.
