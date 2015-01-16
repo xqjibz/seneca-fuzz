@@ -2,20 +2,34 @@ var     domain          = require('domain')
     ,   random          = require('random-ext')
 
 
-module.exports = function(seneca, options, done){
+module.exports = function(seneca, inOptions, done){
 
-    options.argsLength = options.argsLength || 8 // 8 arguments by default
-    //options.actionsList = options.actionsList || ['all'] // all options by default
-    options.testTime = parseInt(options.testTime) * 1000 || 10 * 1000 // 60 seconds default
-
-    var     self = this //don't trounce the seneca var, just in case
+    var defaultOptions = {
+                argsLength  : 8
+            ,   testTime    : 60
+            ,   arrayMax : 20
+            ,   arrayMin : 0
+            ,   integerMin : 0
+            ,   integerMax : 1000
+            ,   floatMax : 1000
+            ,   floatMin : 0
+            ,   dateEnd : new Date()
+            ,   dateStart : null
+            ,   stringMax : 20
+            ,   stringMin : 0
+            ,   objectMax : 8
+            ,   objectMin : 0
+        }
+        ,   self = this // to keep this in the proper context.
+        ,   options = self.util.deepextend(defaultOptions, inOptions)
+        ,   testTime = parseInt(options.testTime * 1000)
         ,   returnObject = {
                 totalIterations : 0
             ,   totalErrors : 0
             ,   totalSuccess : 0
             }
         ,   run = require('./lib/run')(returnObject)
-        ,   randomValue     = require('./lib/random-value')()
+        ,   randomValue     = require('./lib/random-value')(options)
 
     self.add({role: 'fuzztester', 'cmd' : 'fuzz'}, function(args, done){
 
@@ -38,18 +52,17 @@ module.exports = function(seneca, options, done){
         self.log.info('Beginning Fuzz test for all listed actions')
 
         var startTime = new Date()
-        self.log.info('Starting Fuzz test, running for: ', options.testTime / 1000, ' seconds.')
+        self.log.info('Starting Fuzz test, running for: ', testTime / 1000, ' seconds.')
         // do this for the time we specify in the options.
-        while(new Date().valueOf() - startTime.valueOf() < options.testTime){
+        while(new Date().valueOf() - startTime.valueOf() < testTime){
             for(var i = 0 ; i < allActions.length ; i++){
 
                 // random stuff to head in to each action as arguments
 
-                var argsCount = random.integer(options.argsLength,0)
-
-                var choice = parseInt(Math.random() * 10) % 2
-                    , randomArgs = null
-                    , j
+                var     argsCount       = random.integer(options.argsLength,0)
+                    ,   choice          = parseInt(Math.random() * 10) % 2
+                    ,   randomArgs      = null
+                    ,   j
                 if(choice > 1){
                     randomArgs = {}
                     for(j = 0; j < argsCount ; j++){
@@ -72,11 +85,8 @@ module.exports = function(seneca, options, done){
 
         // debugging
         self.log.debug('totals: ', returnObject.totalInterations, ' e: ', returnObject.totalErrors, ' s: ', returnObject.totalSuccess)
-        //clearInterval(loopInterval)
         self.log.info('Completed Fuzz test, returning results')
-        // send it all back
         done(null, returnObject)
-        // complete and return data here.
 
     })
 
