@@ -1,6 +1,6 @@
 var     domain          = require('domain')
     ,   random          = require('random-ext')
-    ,   randomValue     = require('./lib/random-value')()
+
 
 module.exports = function(seneca, options, done){
 
@@ -8,13 +8,14 @@ module.exports = function(seneca, options, done){
     //options.actionsList = options.actionsList || ['all'] // all options by default
     options.testTime = parseInt(options.testTime) * 1000 || 10 * 1000 // 60 seconds default
 
-    var self = this //don't trounce the seneca var, just in case
-    var returnObject = {
-            totalIterations : 0
-        ,   totalErrors : 0
-        ,   totalSuccess : 0
-        }
-    var run = require('./lib/run')(returnObject)
+    var     self = this //don't trounce the seneca var, just in case
+        ,   returnObject = {
+                totalIterations : 0
+            ,   totalErrors : 0
+            ,   totalSuccess : 0
+            }
+        ,   run = require('./lib/run')(returnObject)
+        ,   randomValue     = require('./lib/random-value')()
 
     self.add({role: 'fuzztester', 'cmd' : 'fuzz'}, function(args, done){
 
