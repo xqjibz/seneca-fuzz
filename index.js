@@ -2,8 +2,6 @@ var     domain          = require('domain')
     ,   random          = require('random-ext')
     ,   randomValue     = require('./lib/random-value')()
 
-
-
 module.exports = function(seneca, options, done){
 
     options.argsLength = options.argsLength || 8 // 8 arguments by default
@@ -17,10 +15,6 @@ module.exports = function(seneca, options, done){
         ,   totalSuccess : 0
         }
     var run = require('./lib/run')(returnObject)
-
-
-
-
 
     self.add({role: 'fuzztester', 'cmd' : 'fuzz'}, function(args, done){
 
@@ -68,7 +62,7 @@ module.exports = function(seneca, options, done){
                 }
 
                 runDomain.run(function(){
-                    run(randomArgs,allActions[i])
+                    run(randomArgs,allActions[i], self)
                 })
 
             }
@@ -82,7 +76,6 @@ module.exports = function(seneca, options, done){
         // send it all back
         done(null, returnObject)
         // complete and return data here.
-
 
     })
 
