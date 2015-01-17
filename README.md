@@ -60,3 +60,9 @@ This uses the [random-ext](https://www.npmjs.com/package/random-ext). More detai
 `objectMax` Object properties maximum length. Default : 8
 
 `objectMin` Object properties minimum length. Default : 0
+
+
+### testing
+```sh
+npm test
+```
