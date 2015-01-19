@@ -5,9 +5,10 @@ var     sinon       = require('sinon')
 describe('fuzz tester plugin function', function(){
     it('should return the name of the plugin on instantiation', function(){
         seneca.util.deepextend()
-        var returnValue = require('../').bind(seneca,seneca,{}, function(err, result){
+        require('../').bind(seneca,{}, function(err, result){
             expect(result).to.equal({'name' : 'fuzztester'})
         })
 
     })
+
 })

@@ -11,19 +11,25 @@ Contributions will be accepted via a pull request, with an accompanying issue if
 
 ### Examples/Usage
 
-Using mocha/chai
+Using mocha/chai, a full example can be found in the [test/fuzz-integration.js]()
 
 ```js
 var seneca = require('seneca')()
 seneca.use('fuzztester')
 
-describe('my plugin', function(){
-    it('should match iterations to errors', function(done){
+
+describe('fuzz test from seneca', function(){
+    it('should return an object with the counts inside', function(done){
         seneca.act({role:'fuzztester', cmd:'fuzz'}, function(err, results){
-                       expect(results.totalIterations).to.equal(results.errorCount)
-                       expect(results.successCount.to.equal(0)
-                       expect(err).to.be.null
-                   })
+            expect(err).to.be.null
+            expect(results).to.be.an('object')
+            expect(results.totalIterations).to.be.a('number')
+            expect(results.totalErrors).to.be.a('number')
+            expect(results.totalSuccess).to.be.a('number')
+            expect(results.totalIterations).to.equal(results.totalErrors)
+            expect(results.totalSuccess).to.equal(0)
+            done()
+        })
     })
 })
 ```
