@@ -1,0 +1,29 @@
+{
+  "name": "seneca-fuzztester",
+  "version": "0.0.1",
+  "description": "A fuzz testing plugin for the SenecaJS Framework",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xqjibz/fuzztester.git"
+  },
+  "author": "Robert Myers",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xqjibz/fuzztester/issues"
+  },
+  "homepage": "https://github.com/xqjibz/fuzztester",
+  "dependencies": {
+    "random-ext": "^2.5.0",
+    "underscore": "^1.7.0"
+  },
+  "devDependencies": {
+    "chai": "^1.10.0",
+    "mocha": "^2.1.0",
+    "seneca": "^0.5.21",
+    "sinon": "^1.12.2"
+  }
+}
